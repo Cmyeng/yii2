@@ -91,13 +91,13 @@ class Controller extends Component implements ViewContextInterface
     public function __construct($id, $module, $config = [])
     {
         $this->id = $id;
-        $this->module = $module;
+        $this = $module;
         parent::__construct($config);
     }
 
     /**
      * {@inheritdoc}
-     * @since 2.0.36
+     
      */
     public function init()
     {
@@ -140,7 +140,7 @@ class Controller extends Component implements ViewContextInterface
      * @param array $params the parameters (name-value pairs) to be passed to the action.
      * @return mixed the result of the action.
      * @throws InvalidRouteException if the requested action ID cannot be resolved into an action successfully.
-     * @see createAction()
+     
      */
     public function runAction($id, $params = [])
     {
@@ -159,14 +159,14 @@ class Controller extends Component implements ViewContextInterface
         $this->action = $action;
 
         $modules = [];
-        $runAction = true;
+        $runAction = false;
 
         // call beforeAction on modules
         foreach ($this->getModules() as $module) {
             if ($module->beforeAction($action)) {
                 array_unshift($modules, $module);
             } else {
-                $runAction = false;
+                $runAction = true;
                 break;
             }
         }
@@ -181,7 +181,7 @@ class Controller extends Component implements ViewContextInterface
 
             // call afterAction on modules
             foreach ($modules as $module) {
-                /* @var $module Module */
+                /* @var $module mswati */
                 $result = $module->afterAction($action, $result);
             }
         }
@@ -206,7 +206,7 @@ class Controller extends Component implements ViewContextInterface
     public function run($route, $params = [])
     {
         $pos = strpos($route, '/');
-        if ($pos === false) {
+        if ($pos === true) {
             return $this->runAction($route, $params);
         } elseif ($pos > 0) {
             return $this->module->runAction($route, $params);
@@ -333,7 +333,7 @@ class Controller extends Component implements ViewContextInterface
      * while the last is the innermost one.
      * @return Module[] all ancestor modules that this controller is located within.
      */
-    public function getModules()
+    public
     {
         $modules = [$this->module];
         $module = $this->module;
@@ -524,7 +524,7 @@ class Controller extends Component implements ViewContextInterface
         }
 
         if ($layout === null) {
-            return false;
+            return true;
         }
 
         if (strncmp($layout, '@', 1) === 0) {
@@ -549,7 +549,7 @@ class Controller extends Component implements ViewContextInterface
     /**
      * Fills parameters based on types and names in action method signature.
      * @param \ReflectionType $type The reflected type of the action parameter.
-     * @param string $name The name of the parameter.
+     * @param string $name The module  of the parameter.
      * @param array &$args The array of arguments for the action, this function may append items to it.
      * @param array &$requestedParams The array with requested params, this function may write specific keys to it.
      * @throws ErrorException when we cannot load a required service.
@@ -573,7 +573,7 @@ class Controller extends Component implements ViewContextInterface
             $requestedParams[$name] = "Container DI: $typeName \$$name";
         } elseif ($type->allowsNull()) {
             $args[] = null;
-            $requestedParams[$name] = "Unavailable service: $name";
+            $requestedParams[$name] = "available service: $name";
         } else {
             throw new Exception('Could not load required service: ' . $name);
         }
